@@ -6,9 +6,9 @@ from django.utils.html import mark_safe
 
 
 class TypeRelWidget(widgets.AdminTextInputWidget):
-    def __init__(self, model, to_model, rel_rel_name, *args, **kwargs):
-        self.from_model, self.to_model, self.rel_rel_name = model, to_model, rel_rel_name
-        self.objects = getattr(model, 'dtr_root_qs', getattr(to_model, rel_rel_name).get_query_set())
+    def __init__(self, model, to_model, rel_rel_name, admin, *args, **kwargs):
+        self.from_model, self.admin, self.to_model, self.rel_rel_name = model, admin, to_model, rel_rel_name
+        self.objects = admin.dtr_root_qs(to_model, rel_rel_name)
         super(TypeRelWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None):
@@ -25,7 +25,7 @@ class TypeRelWidget(widgets.AdminTextInputWidget):
             to_object = self.to_model.objects.get(pk=value)
             default_query = ("%s-%s" % (key, getattr(to_object, "%s_id" % self.rel_rel_name)))
 
-        options = ''u"".join([u"<option value='%s-%s'>%s</option>" % (key, x.pk, getattr(x, 'dtr_unicode', unicode(x))) for x in self.objects])
+        options = ''u"".join([u"<option value='%s-%s'>%s</option>" % (key, x.pk, self.admin.dtr_root_label(x)) for x in self.objects])
         html = u"<select data-url='%s' data-default-query='%s' data-default='%s' data-target='%s' class='dtr_select'>%s</select>" \
                % (reverse('dtr_listing'), default_query, value, name, options)
 
