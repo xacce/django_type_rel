@@ -1,4 +1,5 @@
 (function ($) {
+
     $(function () {
         $('.dtr_select').each(function () {
             var select = $(this)
@@ -33,4 +34,4 @@
         }
     })
 
-})(django.jQuery)
+})(typeof django == 'undefined' ? jQuery : django.jQuery)
